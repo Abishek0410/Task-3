@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = "https://www.bbc.com/news"
+URL = "https://edition.cnn.com/"
 
 try:
     response = requests.get(URL, timeout=10)
