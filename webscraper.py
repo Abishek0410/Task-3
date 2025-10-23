@@ -1,22 +1,27 @@
-
 import requests
 from bs4 import BeautifulSoup
 
-URL = "https://www.bbc.com/news"  
-response = requests.get(URL)
-print("Status Code:", response.status_code) 
+URL = "https://www.bbc.com/news"
 
-soup = BeautifulSoup(response.text, "html.parser")
+try:
+    response = requests.get(URL, timeout=10)
+    response.raise_for_status()
+    print("Status Code:", response.status_code)
 
-headlines = []
+    soup = BeautifulSoup(response.text, "html.parser")
+    headlines = []
 
-for tag in soup.find_all(['h2', 'h3']):
-    title = tag.get_text(strip=True)
-    if title and len(title) > 10:   
-        headlines.append(title)
+    for tag in soup.find_all(['h2', 'h3']):
+        title = tag.get_text(strip=True)
+        if title and len(title) > 10:
+            headlines.append(title)
 
-with open("news_headlines.txt", "w", encoding="utf-8") as f:
-    for i, line in enumerate(headlines, start=1):
-        f.write(f"{i}. {line}\n")
+    with open("Headlines.txt", "w", encoding="utf-8") as f:
+        for i, line in enumerate(headlines, start=1):
+            f.write(f"{i}. {line}\n")
 
-print(f"\n✅ {len(headlines)} headlines saved successfully in 'news_headlines.txt'!")
+    print(f"\n{len(headlines)} headlines saved successfully in 'Headlines.txt'!")
+except requests.exceptions.RequestException as e:
+    print("Error fetching the webpage:", e)
+except Exception as e:
+    print("An unexpected error occurred:", e)
